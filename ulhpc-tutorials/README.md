@@ -1,11 +1,6 @@
-[![By ULHPC](https://img.shields.io/badge/by-ULHPC-blue.svg)](https://hpc.uni.lu) [![Licence](https://img.shields.io/badge/license-GPL--3.0-blue.svg)](http://www.gnu.org/licenses/gpl-3.0.html) [![GitHub issues](https://img.shields.io/github/issues/ULHPC/tutorials.svg)](https://github.com/ULHPC/tutorials/issues/) [![](https://img.shields.io/badge/slides-PDF-red.svg)](https://github.com/ULHPC/tutorials/raw/devel/cuda/slides.pdf) [![Github](https://img.shields.io/badge/sources-github-green.svg)](https://github.com/ULHPC/tutorials/tree/devel/cuda/) [![Documentation Status](http://readthedocs.org/projects/ulhpc-tutorials/badge/?version=latest)](http://ulhpc-tutorials.readthedocs.io/en/latest/cuda/) [![GitHub forks](https://img.shields.io/github/stars/ULHPC/tutorials.svg?style=social&label=Star)](https://github.com/ULHPC/tutorials)
-
 # Introduction to GPU programming with CUDA (C/C++)
 
-     Copyright (c) 2013-2021 UL HPC Team <hpc-sysadmins@uni.lu>
-
 [![](https://github.com/ULHPC/tutorials/raw/devel/cuda/cover_slides.png)](https://github.com/ULHPC/tutorials/raw/devel/cuda/slides.pdf)
-
 
 This tutorial will cover the following aspects of CUDA programming:
 
@@ -15,7 +10,7 @@ This tutorial will cover the following aspects of CUDA programming:
 - Access memory on both GPU and CPU.
 - Profile and improve the performance of your application.
 
-Solutions to some of the exercises can be found in the [code sub-directory][3].
+Solutions to some of the exercises can be found in the [code_solutions sub-directory][3].
 
 The tutorial is based on the Nvidia DLI course "Fundamentals of accelerated computing with CUDA C/C++".
 
@@ -23,123 +18,16 @@ More information can be obtained from [the guide][1].
 
 [1]: https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html "Programming guide"
 [2]: https://docs.nvidia.com/cuda/cuda-runtime-api/index.html "Runtime API"
-[3]: ./code "code"
+[3]: ./code_solutions "code_solutions"
 
 --------------------
 ## Pre-requisites ##
 
-Ensure you are able to [connect to the UL HPC clusters](https://hpc-docs.uni.lu/connect/access/).
-In particular, recall that the `module` command **is not** available on the access frontends.
+Ensure CUDA driver is installed and you are able to use these commands without errros:
 
 ```bash
-### Access to ULHPC cluster - here iris
-(laptop)$> ssh iris-cluster
-# /!\ Advanced (but recommended) best-practice:
-#    always work within an GNU Screen session named with 'screen -S <topic>' (Adapt accordingly)
-# IIF not yet done, copy ULHPC .screenrc in your home
-(access)$> cp /etc/dotfiles.d/screen/.screenrc ~/
-```
-
-Now you'll need to pull the latest changes in your working copy of the [ULHPC/tutorials](https://github.com/ULHPC/tutorials) you should have cloned in `~/git/github.com/ULHPC/tutorials` (see ["preliminaries" tutorial](../../preliminaries/))
-
-``` bash
-(access)$> cd ~/git/github.com/ULHPC/tutorials
-(access)$> git pull
-```
-
-
-## Access to a GPU-equipped node of the Iris cluster
-
-Reserve a node with one GPU for interactive development, load the necessary modules, and save them for a quick restore.
-
-As usual, more information can be found in the [documentation][4].
-
-[4]: https://hpc-docs.uni.lu/jobs/gpu/
-
-```bash
-### Have an interactive GPU job
-# ... either directly
-(access)$> si-gpu
-# ... or using the HPC School reservation 'hpcschool-gpu' if needed  - use 'sinfo -T' to check if active and its name
-# (access)$> si-gpu --reservation=hpcschool-gpu
+$ nvcc
 $ nvidia-smi
-$ nvcc  # ?
-```
-
-Driver is loaded, but we still need to load the CUDA development kit.
-
-```bash
-$ module av cuda  # av versus spider
------------------------------------------------------------ /opt/apps/resif/data/stable/default/modules/all ------------------------------------------------------------
-   bio/GROMACS/2019.2-fosscuda-2019a                    mpi/impi/2018.4.274-iccifortcuda-2019a
-   bio/GROMACS/2019.2-intelcuda-2019a                   numlib/FFTW/3.3.8-intelcuda-2019a
-   compiler/Clang/8.0.0-GCCcore-8.2.0-CUDA-10.1.105     numlib/cuDNN/7.4.2.24-gcccuda-2019a
-   data/h5py/2.9.0-fosscuda-2019a                       numlib/cuDNN/7.6.4.38-gcccuda-2019a                       (D)
-   data/h5py/2.9.0-intelcuda-2019a                      system/CUDA/9.2.148.1
-   devel/PyTorch/1.2.0-fosscuda-2019a-Python-3.7.2      system/CUDA/10.0.130
-   lang/SciPy-bundle/2019.03-fosscuda-2019a             system/CUDA/10.1.105-GCC-8.2.0-2.31.1
-   lang/SciPy-bundle/2019.03-intelcuda-2019a            system/CUDA/10.1.105-iccifort-2019.1.144-GCC-8.2.0-2.31.1
-   lib/NCCL/2.4.7-gcccuda-2019a                         system/CUDA/10.1.105
-   lib/TensorFlow/1.13.1-fosscuda-2019a-Python-3.7.2    system/CUDA/10.1.243                                      (D)
-   lib/TensorRT/6.0.1.5-fosscuda-2019a-Python-3.7.2     system/CUDA/10.2.89
-   lib/libgpuarray/0.7.6-fosscuda-2019a                 toolchain/fosscuda/2019a
-   math/Keras/2.2.4-fosscuda-2019a-Python-3.7.2         toolchain/gcccuda/2019a
-   math/Theano/1.0.4-fosscuda-2019a                     toolchain/iccifortcuda/2019a
-   math/magma/2.5.1-fosscuda-2019a                      toolchain/intelcuda/2019a
-   mpi/OpenMPI/3.1.4-gcccuda-2019a                      tools/Horovod/0.16.3-fosscuda-2019a-Python-3.7.2
-
-  Where:
-   D:  Default Module
-
-Use "module spider" to find all possible modules.
-Use "module keyword key1 key2 ..." to search for all possible modules matching any of the "keys".
-
-$ module av gcc cuda
-$ module load compiler/GCC system/CUDA  # defaults are fine
-$ ml
-$ module save cuda  # save our environment
-$ module purge
-$ module restore cuda
-```
-
-In case there is not enough GPU cards available, you can submit passive jobs, using `sbatch`.
-Below is an example `sbatch` file, to remote compile, run and profile a source file:
-
-```bash
-#!/bin/bash -l
-#SBATCH --job-name="GPU build"
-#SBATCH --ntasks=1
-#SBATCH -c 1
-#SBATCH --time=0-00:10:00
-#SBATCH --partition=gpu
-#SBATCH --gres=gpu:1
-
-if [ -z "$1" ]
-then
-	echo "Missing required source (.cu), and optional execution arguments."
-	exit
-fi
-
-src=${1}
-exe=$(basename ${1/cu/out})
-ptx=$(basename ${1/cu/ptx})
-prf=$(basename ${1/cu/prof})
-shift
-args=$*
-
-# after the module profile is saved (see above)
-module restore cuda
-
-# compile
-srun nvcc -arch=compute_70 -o ./$exe $src
-# save ptx
-srun nvcc -ptx -arch=compute_70 -o ./$ptx $src
-# execute
-srun ./$exe $args
-# profile
-srun nvprof --log-file ./$prf ./$exe $args
-echo "file: $prf"
-cat ./$prf
 ```
 
 ## Writing application for the GPU
