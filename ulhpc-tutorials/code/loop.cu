@@ -1,6 +1,4 @@
-/*
- * FIXME
- * (loop.cu)
+/* FIXME
  * Correct, and refactor 'loop' to be a CUDA Kernel.
  * The new kernel should only do the work
  * of 1 iteration of the original loop.
@@ -28,3 +26,4 @@ int main()
   int N = 10;
   loop(N);
 }
+

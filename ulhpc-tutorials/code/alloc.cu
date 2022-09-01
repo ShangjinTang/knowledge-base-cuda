@@ -1,7 +1,3 @@
-/*
- * FIXME
- * (alloc.cu)
- */
 
 #include <cstdio>
 

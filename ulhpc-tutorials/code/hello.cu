@@ -1,6 +1,6 @@
+
 /*
  * FIXME
- * (hello.cu)
  */
 
 void helloCPU()

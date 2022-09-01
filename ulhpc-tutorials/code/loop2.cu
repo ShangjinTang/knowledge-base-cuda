@@ -1,6 +1,4 @@
-/*
- * FIXME
- * (loop2.cu)
+/* FIXME
  * Fix and refactor 'loop' to be a CUDA Kernel, launched with 2 or more blocks
  * The new kernel should only do the work of 1 iteration of the original loop.
  */
@@ -28,3 +26,4 @@ int main()
   int N = 10;
   loop(N);
 }
+

@@ -1,6 +1,5 @@
 /*
  * FIXME
- * (indices.cu)
  */
 
 #include <cstdio>
@@ -21,3 +20,4 @@ int main()
 
   printif<<<1, 1>>>();
 }
+
